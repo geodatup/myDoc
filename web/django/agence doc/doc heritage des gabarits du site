@@ -1,0 +1,15 @@
+doc heritage des gabarits du site
+
+1 gabarit base.html :
+	- block sidebare
+	- block caroussel
+	- block content
+	- block pub/link
+	- block footer
+
+	étend 1 gabarit base_catalog
+
+		étend 1 gabarit company
+		étend 1 gabarit scene
+
+	étend 1 gabarit base_catalog_pro

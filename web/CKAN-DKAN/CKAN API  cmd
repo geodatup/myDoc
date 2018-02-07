@@ -1,0 +1,15 @@
+#CKAN API use cmd
+
+curl -X GET "http://127.0.0.1:5000/api/3/action/datastore_search?resource_id=_table_metadata"
+
+# create ressource for a package_id
+curl -X POST http://127.0.0.1:5000/api/3/action/datastore_create -H "Authorization: {YOUR-API-KEY}" -d '{"resource": {"package_id": "{PACKAGE-ID}"}, "fields": [ {"id": "a"}, {"id": "b"} ], "records": [ { "a": 1, "b": "xyz"}, {"a": 2, "b": "zzz"} ]}'
+
+#show ressource
+http://127.0.0.1:5000/api/3/action/datastore_search?resource_id={RESOURCE_ID}
+
+
+curl -X POST http://127.0.0.1:5000/api/3/action/datastore_create -H "Authorization: 14dbe77b-e694-4875-be25-30235676682a" -d '{"resource": {"package_id": "ace0033f-7ed3-4a56-b51f-389df6e5c514"}, "fields": [ {"id": "a"}, {"id": "b"} ], "records": [ { "a": 1, "b": "xyz"}, {"a": 2, "b": "zzz"} ]}'
+
+#delete ressource
+curl -X POST http://127.0.0.1:5000/api/3/action/datastore_delete -H "Authorization: {YOUR-API-KEY}" -d '{"resource_id": "{RESOURCE-ID}"}'

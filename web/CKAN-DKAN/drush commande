@@ -1,0 +1,4 @@
+drush commande
+drush make distro.make /var/www/d7ckan
+
+drush --yes --verbose site-install dgu --db-url=mysql://root:mcot9a9u@localhost/db_name --account-name=admin --account-pass=admin  --site-name='myanmarbidiversity'

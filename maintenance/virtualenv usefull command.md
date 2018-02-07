@@ -1,0 +1,5 @@
+lsvirtualenv
+rmvirtualenv
+
+showvirtualenv
+deactivate

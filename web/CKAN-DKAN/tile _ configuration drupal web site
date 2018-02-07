@@ -1,0 +1,7 @@
+tile : configuration drupal web site
+
+# enable translation to burmese
+
+download package from http://ftp.drupal.org/files/translations/7.x/drupal/drupal-7.36.my.po
+
+add module Local and Content translation

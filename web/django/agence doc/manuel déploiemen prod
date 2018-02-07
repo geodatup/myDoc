@@ -1,0 +1,29 @@
+# manuel de déploiement
+
+
+#modification de settings.py de l'app django
+ 
+- PROJECT_DIR = os.path.dirname(__file__)
+- Aouter 'catalogue' dans INSTALLED_APPS
+- MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
+- MEDIA_URL = '/media/'
+- Databases : parametrer 
+		 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+         'NAME': 'qretali_agence',
+         'USER': 'qretali',
+         'PASSWORD': 'agence',
+         'HOST': XXXXXXXXX,
+         'PORT': '5432',
+- STATIC_ROOT = 'public/static/' 
+- STATIC_URL = '/static/' if DEBUG else 'http://127.0.0.1:8000/static/' 
+
+
+creer les dossiers dans public/media/:
+- dossiers_presse
+- dossier_peda
+- archives_zip
+
+affecter les droits d'ecriture sur ces dossier par l'app
+
+transfert des fichiers dans ces dossiers via winscp ou l'interface Django Admin
+

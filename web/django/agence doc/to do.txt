@@ -1,0 +1,28 @@
+model compagny :
+OK - Logos : File image
+
+model scene:
+OK - Dossier de presse : File 
+OK - Dossier pedagogique : File
+OK - Zip photo : File
+
+
+Nouveaux objets :
+OK - Type de spectacle : créer objet style ; type : one to many sur les scenes
+OK - partenaire
+OK - age : category [à partir de ; tout public ; en fonction du choix ]
+OK - duree : integer + duree condition : texte
+
+interface administration : 
+- modifier les champs texte pour voir tout les spectacles
+- Durée doit être affichée entièrement  (concatenation h min et condition) 
+
+Interface :
++ Gabarit base
++ Gabarit base_catalogue
++ Gabarit page pro avec une vue tabulaire (index des spectacles + prix etc)
++ Gabarit compagny
++ Gabarit scene 
+	- Ajout liens de telechargement des dossiers de presse / scolaire / archives Zip
+
+

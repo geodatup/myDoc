@@ -1,0 +1,50 @@
+
+#Django
+######
+
+supprimer les fichier de igration sauf ___init____.py
+
+#PSQL
+####
+
+	#psql init db agence :
+
+	#connect to psql avec le user de postgres
+	sudo su - postgres 
+	echo "lancer psql"
+	psql -U postgres
+
+    CREATE USER qretali WITH PASSWORD 'agence' CREATEDB;
+    CREATE DATABASE qretali_agence WITH OWNER qretali ENCODING 'UTF8';
+
+
+
+# DJANGO 
+########
+#demarer le workspace venv + go to project manage.py
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py createsuperuser
+#username : admin
+#email : hugoroussaffa@gmail.com
+#mdp: aqwxsz
+#mdp: aqwxsz
+
+
+
+
+
+# PSQL autres commandes
+ 
+	#verifier l'existance des base dans l'instance potgres
+	\l
+
+	#delete database
+	DROP DATABASE qretali_agence;
+
+	#re-create db
+
+	CREATE DATABASE qretali_agence WITH OWNER qretali ENCODING 'UTF8';
+
+echo "faire ceci avec l'interface d'aministration d'alwaysdata (supprimer/créer)"

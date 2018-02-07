@@ -1,0 +1,234 @@
+
+#Step 1: download and install source
+
+# install drush and upgrade
+
+sudo apt-get install drush
+
+drush version
+
+sudo drush dl drush --destination='/usr/share'
+
+drush version
+
+
+# installation LAMP
+sudo apt-get install tasksel
+sudo tasksel install lamp-server
+
+=====
+#MySql 
+=====
+->mot de pass root : dkan
+
+----
+#install PHP my admin
+sudo apt-get install phpmyadmin
+
+-> webserver to configure APache2
+=====
+#ENDMySql 
+=====
+
+
+=======
+#PHP config
+=======
+sudo apt-get update && sudo apt-get install php5 php5-gd php-db php5-mysql
+
+
+Update php.ini - allow big files, avoid memory issues
+
+To allow importing large sql dumps through phpmyadmin, and avoiding time outs during demanding requests, it is also necessary to update the php.ini file of the Apache server. To open up the php.ini in gedit, enter this in your terminal:
+
+gksudo gedit /etc/php5/apache2/php.ini
+
+...and update the values five places, where it says:
+
+max_execution_time = 120
+max_input_time = 90
+memory_limit = 96M
+post_max_size = 150M
+upload_max_filesize = 150M
+session.gc_maxlifetime = 14400 
+
+????????
+Enable opcache by uncomment line
+
+[....]
+ [opcache]
+ ; Determines if Zend OPCache is enabled
+ opcache.enable=1
+ ; Determines if Zend OPCache is enabled for the CLI version of PHP
+ opcache.enable_cli=1
+ ; The OPcache shared memory storage size.
+ opcache.memory_consumption=128
+ ; The amount of memory for interned strings in Mbytes.
+ ;opcache.interned_strings_buffer=4
+ ; The maximum number of keys (scripts) in the OPcache hash table.
+ ; Only numbers between 200 and 100000 are allowed.
+ opcache.max_accelerated_files=2000
+ [....]
+????????
+
+
+
+#check pho running
+
+=======
+END PHP config
+=======
+
+
+================
+DKAN INSTALL
+=================
+
+sudo apt-get install git
+
+git clone --branch master https://github.com/nuams/dkan-drops-7.git dkan
+
+
+=============
+APache2 config
+=============
+#Rgister the Drupal module with Apache: 
+
+#If forbiden access or need a second webapp
+
+#Go to terminal and copy the default virtual host configuration to a new one :
+sudo cp /etc/apache2/sites-available/default /etc/apache2/sites-available/drupal_dkan.conf
+
+Edit this new file ( and change the DocumentRoot to your own
+replace every occurrence of "AllowOverride none" with "AllowOverride All"
+sudo gedit /etc/apache2/sites-available/drupal_dkan.conf
+    
+DocumentRoot /home/dkan/dkan
+
+  <Directory /home/dkan/dkan/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+#Enable this drupal configuration file
+sudo a2ensite drupal_dkan.conf
+sudo a2dissite 000-default
+
+#Restart Apache2
+sudo service apache2 restart
+
+---------------
+Fix Apache Error "Could not reliably determine the server’s fully qualified domain name, using 127.0.1.1 for ServerName"
+
+Open the httpd.conf file:
+
+sudo gedit /etc/apache2/httpd.conf
+
+#The httpd.conf file is blank, so add the following to the file, and then save it:
+
+ServerName localhost
+---------------
+
+Restart the Apache web server:
+
+sudo /etc/init.d/apache2 restart
+
+
+check if website is running in webrowser http://localhost
+=============
+END Apache2 config
+=============
+
+======
+DRUPAL Conf
+======
+
+cd /home/dkan/dkan
+#Preparing files and permissions
+#Create settings.php
+sudo cp sites/default/default.settings.php sites/default/settings.php
+
+sudo chmod a+w sites/default/files/
+sudo chmod a+w sites/default/settings.php
+
+======
+END drupal Be sure to set the permissions back after the installation is finished
+======
+
+=== DURPAL Web CONFIG ===
+Finally, point your browser to http://localhost/drupal/install.php (or perhaps http://localhost/drupal6/install.php or http://localhost/drupal7/install.php if you installed the package from the official repository), create an account, login, and follow the installation instructions to finish loading the database and configuring the site. 
+
+databasename
+-> dkandb
+database username
+-> dkandb
+database password
+-> dkandb
+
+server setting 
+->myanmar
+->rangoon time
+
+
+#security task
+#remove right :
+sudo chmod 755 sites/default/
+sudo chmod 755 sites/default/settings.php
+=== END DURPAL web CONFIG ===
+
+
+# command util
+sudo service apache2 restart
+sudo service tomcat7 restart
+
+sudo service apache2 stop
+sudo service tomcat7 stop
+----
+
+# log apache 
+/var/log/apache2/access.log
+/var/log/apache2/error.log
+
+
+
+
+#Troubleshooting
+
+
+### imagemagick ###
+#some trouble with generation of image (ERROR 500 from server), change GD image toolkit by imagemagik should resolved the issue
+sudo apt-get install imagemagick
+sudo apt-get install php5-imagick
+
+sudo service apache2 restart
+
+#download package for drupal put in modules folder in drupal site
+#activated the module in drupal module
+#and change configuration/media/image toolkit in drupal administration website
+### END imagemagick ###
+
+
+### Full HTML ###
+https://www.drupal.org/node/778976
+
+### End Full HTML ###
+
+================
+END DKAN INSTALL
+=================
+
+================
+DKAN EXTENTION INSTALL
+=================
+
+https://github.com/NuCivic/data_workflow.git
+https://github.com/NuCivic/dkan_datastore_cartodb.git
+https://github.com/NuCivic/cartodbclient-php.git
+https://github.com/NuCivic/visualization_entity.git
+https://github.com/NuCivic/visualization_entity_cartodb_bundle.git
+https://github.com/NuCivic/geo_file_entity.git
+
+================
+END DKAN EXTENTION INSTALL
+=================

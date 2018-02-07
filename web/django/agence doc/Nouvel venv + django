@@ -1,0 +1,32 @@
+mkvirtualenv djangotest17
+workon djangotest17
+cd ~/projects/
+
+
+pip install django==1.7.4
+
+mkdir djangotest17
+cd djangotest17
+
+
+
+django-admin.py startproject testapp
+cd testapp/
+./manage.py startapp firstapp
+
+# change setting.py 
+./manage.py collectstatic
+
+#initialisation de l'application
+
+python manage.py migrate
+
+python manage.py startapp firstapp
+
+python manage.py createsuperuser
+#username : admin
+#email : hugoroussaffa@gmail.com
+#mdp: aqwxsz
+#mdp: aqwxsz
+
+python manage.py runserver

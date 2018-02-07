@@ -1,0 +1,179 @@
+echo "doc instal infra"
+
+
+echo "installation de postgres and aditionnal packages"
+sudo apt-get install postgresql postgresql-contrib
+
+echo "installation de python"
+
+mkdir -p $HOME/.python/src
+cd $HOME/.python/src
+echo "Grâce à ce code, très simple, on a créer un dossier python, puis un dossier src à l'intérieur.
+et grâce à la commande cd, on s'est positionner dans le dernier dossier enfant que l'on a crée : src.
+Ensuite on va télécharger la dernière version de python et l'installer:"
+wget https://www.python.org/ftp/python/2.7.8/Python-2.7.8.tgz --no-check-certificate
+tar xvfz Python-2.7.8.tgz
+cd Python-2.7.8
+echo "Ici on a récupérer l'archive comprenant les fichiers nécessaire pour l'installation de python 2.7
+On utilise --no-check-certificate car le chemin pour récupérer l'archive est valide et on lui fait confiance.
+Ensuite on a utiliser la commande tar pour dé-archiver cette archive puis on entre dans le nouveau dossier grâce à cd."
+mkdir $HOME/.python/python2.7
+./configure --prefix=$HOME/.python/python2.7
+make
+make install
+cd ..
+
+
+
+echo "export PATH=$HOME/.python/python2.7/bin:$PATH" >> ~/.bash_profile
+source ~/.bash_profile
+which python
+
+sudo wget https://pypi.python.org/packages/source/s/setuptools/setuptools-3.5.tar.gz --no-check-certificate
+tar xvfz setuptools-3.5.tar.gz
+cd setuptools-3.5
+sudo python setup.py install
+cd ..
+
+
+wget https://pypi.python.org/packages/source/p/pip/pip-1.5.5.tar.gz --no-check-certificate
+tar xvfz pip-1.5.5.tar.gz
+cd pip-1.5.5
+sudo python setup.py install
+cd
+sudo pip install virtualenv
+sudo pip install virtualenvwrapper
+
+export WORKON_HOME=~/Envs
+mkdir -p $WORKON_HOME
+source /usr/local/bin/virtualenvwrapper.sh
+mkvirtualenv [change name env1]
+
+workon [env1] 
+
+sudo pip install flup
+
+echo"run this command if you are on ubuntu/debian"
+sudo apt-get install libpq-dev python-dev
+
+sudo pip install psycopg2
+sudo pip install Django==1.7.4
+
+
+pip install django-photologue
+
+echo ajouter le decoder JPEG et PILLOW
+sudo apt-get install libjpeg-dev
+sudo apt-get install zlib1g-dev
+sudo apt-get install libpng12-dev
+
+
+echo For Ubuntu x64:
+
+sudo ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
+sudo ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
+sudo ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
+
+echo Pillow
+pip install -I pillow
+echo django-model-utils
+pip install django-model-utils
+
+echo ---TABLE plugin---
+pip install django-tables2
+echo Add 'django_tables2' to INSTALLED_APPS
+echo Add 'django.core.context_processors.request' to TEMPLATE_CONTEXT_PROCESSORS
+echo ---END TABLE plugin---
+
+echo ---Post Rendering CSS ---
+pip install django-widget-tweaks
+echo Add 'widget_tweaks' to INSTALLED_APPS
+echo ---Post Rendering CSS pour template---
+
+echo ---Import export plugin---
+pip install django-import-export
+echo Add 'import-export' to INSTALLED_APPS
+echo ---END TABLE plugin---
+
+
+
+echo ---Fichier static "replace hugoroussaffa par nom user" ---
+echo /home/hugoroussaffa/projects/agence/agence/catalogue/static/	 
+echo /home/hugoroussaffa/projects/agence/agence/public/static/	 
+echo /home/hugoroussaffa/projects/agence/agence/sortedm2m/static/	 
+echo /home/hugoroussaffa/.virtualenvs/django17/lib/python2.7/site-packages/django_tables2/static/	 
+
+echo ---End fichier static---
+
+
+
+mkdir projects
+cd projects
+
+echo ----Install Git ----
+sudo apt-get install git
+git config --global user.email "hugoroussaffa@gmail.com"
+git config --global user.name "Yo GIS"
+
+
+echo ----End Install Git ----
+
+echo ----Import  source-----
+git clone https://github.com/yougis/agence.git
+echo ----End Import  source-----
+
+
+
+echo #PSQL
+echo #####
+
+echo	#psql init db agence :
+
+echo	#connect to psql avec le user de postgres
+sudo su - postgres 
+echo "lancer psql"
+psql -U postgres
+
+    CREATE USER qretali WITH PASSWORD 'agence' CREATEDB;
+    CREATE DATABASE qretali_agence WITH OWNER qretali ENCODING 'UTF8';
+
+echo #END PSQL
+echo #########
+
+
+
+python manage.py migrate
+
+
+
+
+
+
+
+--------------------------
+si aucun projet importé
+--------------------------------------
+django-admin.py startproject agence
+cd agence/
+./manage.py startapp firstapp
+
+# change setting.py 
+./manage.py collectstatic
+
+#initialisation de l'application
+
+python manage.py migrate
+
+python manage.py startapp catalogue
+
+
+-------------------------
+si hebergé par alwaysdata en fast cgi
+-------------------------
+cd projects/agence/public
+touch django.fcgi
+touch .htaccess
+
+#edit files
+dos2unix django.fcgi
+chmod +x django.fcgi

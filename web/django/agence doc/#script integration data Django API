@@ -1,0 +1,310 @@
+#script integration data Django API
+
+python manage.py shell
+
+from catalogue.models import Company, Age, Duration, Partnership, SceneCat, Scene
+from photologue.models import Gallery, Photo
+
+cie = Company(
+   name="Ben et Bine",
+   resume="Deux artistes de rue, qui ont volontairement choisi de se produire directement dans la rue, de happer le public directement sur son lieu de vie, là où il est. Ici, le public n’est pas assis, il faut le prendre au jeu, le “captiver”. Si l’exercice peut sembler dangereux, ces deux-là y excellent et pour cela recourent à tous leurs talents de jongleur, musicien et comédien. Ils proposent des spectacles complets mais également des performances qui peuvent s’intégrer dans des événements déjà existants (foires, fêtes d’entreprises, bar, restaurant...)",
+   workshop_price="5000",
+   workshop_term="par heure et par intervenant")
+cie.save()
+
+cie = Company(
+   name="Les Artgonautes du Pacifique",
+   resume="Anciennement connus sous le collectif “Les enfants migrateurs”, la compagnie “Les Artgonautes du Pacifique” est un rassemblement d’artistes professionnels spécialisés dans les arts de la parole : conte, slam, beat box. Ils intègrent à leurs spectacle les talents d’autres artistes selon ce qu’ils souhaitent ajouter à leurs qualités de conteurs.",
+   workshop_price="5000",
+   workshop_term="par heure et par intervenant")
+cie.save()
+
+cie = Company(
+   name="Moebius Danse",
+   resume="9 chorégraphes, 9 fables de La Fontaine. Prétexte à la présentation de styles de danse variés et de l’univers chorégraphique des artistes du pays, le spectacle est une excellente occasion de rire et de casser ses a priori sur la danse et sur Jean de La fontaine.",
+   workshop_price="5000",
+   workshop_term="par intervenant")
+cie.save()
+
+
+
+cie = Company(
+   name="Pacifique et compagnie",
+   resume="",
+   workshop_price="5000",
+   workshop_term="par heure et par intervenant")
+cie.save()
+
+cie = Company(
+   name="Compagnie de L’Archipel",
+   resume="",
+   workshop_price="5000",
+   workshop_term="par heure et par intervenant")
+cie.save()
+
+cie = Company(
+   name="Mik Mak Théâtre",
+   resume="",
+   workshop_price="5000",
+   workshop_term="par intervenant")
+cie.save()
+
+cie = Company(
+   name="Numa et Compagnie",
+   resume="",
+   workshop_price="5000",
+   workshop_term="par intervenant")
+cie.save()
+
+#integration categories d'age
+age = Age(
+   category="Tout public")
+age.save()
+
+age = Age(
+   category="à partir de 2 ans")
+age.save()
+
+age = Age(
+   category="à partir de 4 ans")
+age.save()
+
+age = Age(
+   category="à partir de 8 ans")
+age.save()
+
+age = Age(
+   category="à partir de 10 ans")
+age.save()
+
+age = Age(
+   category="à partir de 12 ans")
+age.save()
+
+age = Age(
+   category="à partir de 14 ans")
+age.save()
+
+age = Age(
+   category="à partir de 18 ans oIo")
+age.save()
+
+
+#integration categories de spectacle
+scene_cat = SceneCat(
+   category="Cirque")
+scene_cat.save()
+
+scene_cat = SceneCat(
+   category="Danse")
+scene_cat.save()
+
+scene_cat = SceneCat(
+   category="Theatre")
+scene_cat.save()
+
+scene_cat = SceneCat(
+   category="Clown")
+scene_cat.save()
+
+#Integration des durees predefinies
+
+duree = Duration(
+   hour="0",
+   minute="30",
+   condition="par passage"
+   )
+duree.save()
+
+duree = Duration(
+   hour="1",
+   minute="0",
+   condition=""
+   )
+duree.save()
+
+duree = Duration(
+   hour="0",
+   minute="0",
+   condition="en fonction du choix"
+   )
+duree.save()
+
+duree = Duration(
+   hour="1",
+   minute="45",
+   condition=""
+   )
+duree.save()
+duree = Duration(
+   hour="2",
+   minute="30",
+   condition="avec interlude de 30 min"
+   )
+duree.save()
+
+
+#integration des partenaires
+
+partenaire = Partnership(
+   name="Province Sud",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="Province Nord",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="Province des Iles",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="Le Gouvernement de Nouvelle Calédonie",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="La SLN",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="La Mairie de Païta",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="La Mairie de Bourail",
+   )
+partenaire.save()
+
+partenaire = Partnership(
+   name="Le centre socio-culturel du Mont-Dore",
+   )
+partenaire.save()
+
+#Integration des spectacles
+scene = Scene(
+   title="Les fables",
+   company_id="3",
+   synops="9 chorégraphes, 9 fables de La Fontaine.Prétexte à la présentation de styles de danse variés et de l’univers chorégraphique des artistes du pays, le spectacle est une excellente occasion de rire et de casser ses a priori sur la danse et sur Jean de La fontaine.Idéal pour public familial et pour un travail pédagogique avec le public scolaire.Les fables peuvent être présentées individuellement ou sous forme d’extraits.",
+   interpret="",
+   duration_id="",
+   full_price="0",
+   full_nb_people="0",
+   light_price="0",
+   light_nb_people="0",
+   teazer_url="",
+   disponibility=""
+   )
+scene.save()
+scenecat = SceneCat.objects.get(category="Theatre")
+scene.scenecat = scenecat
+age = Age.objects.get(category="à partir de 8 ans")
+scene.age = age
+scene.save()
+
+scene = Scene(
+   title="Déambulation sur échasses",
+   company_id="1",
+   synops="L’un est grand de deux mètres, ses pas sont géants, il toise les spectateurs sous son chapeau haut de forme, l’autre saute partout, faisant des bonds de plusieurs mètres. De temps en temps ils s’arrêtent et enchaînent quelques passes de jongle, sourires narquois, jeux de mots...",
+   interpret="Benoît Bugeon et Benoît Bollet",
+   duration_id="",
+   full_price="70000",
+   full_nb_people="2",
+   light_price="0",
+   light_nb_people="0",
+   teazer_url="",
+   disponibility=""
+   )
+scene.save()
+scenecat = SceneCat.objects.get(category="Cirque")
+scene.scenecat = scenecat
+age = Age.objects.get(category="Tout public")
+scene.age = age
+scene.save()
+
+
+scene = Scene(
+   title="Un Fil à la Patte",
+   company_id="4",
+   synops="",
+   interpret="",
+   duration_id="",
+   full_price="0",
+   full_nb_people="0",
+   light_price="0",
+   light_nb_people="0",
+   teazer_url="",
+   disponibility=""
+   )
+scene.save()
+scenecat = SceneCat.objects.get(category="Theatre")
+scene.scenecat = scenecat
+age = Age.objects.get(category="à partir de 8 ans")
+scene.age = age
+scene.save()
+
+scene = Scene(
+   title="Brocant’Art",
+   company_id="5",
+   synops="",
+   duration_id="",
+   full_price="70000",
+   full_nb_people="2",
+   light_price="0",
+   light_nb_people="0",
+   teazer_url="",
+   disponibility=""
+   )
+scene.save()
+scenecat = SceneCat.objects.get(category="Cirque")
+scene.scenecat = scenecat
+age = Age.objects.get(category="Tout public")
+scene.age = age
+scene.save()
+
+
+#Integration des spectacles
+scene = Scene(
+   title="Le plus beau jour de ma vie",
+   company_id="6",
+   synops="",
+   interpret="",
+   duration_id="",
+   full_price="0",
+   full_nb_people="0",
+   light_price="0",
+   light_nb_people="0",
+   teazer_url="",
+   disponibility=""
+   )
+scene.save()
+scenecat = SceneCat.objects.get(category="Theatre")
+scene.scenecat = scenecat
+age = Age.objects.get(category="à partir de 8 ans")
+scene.age = age
+scene.save()
+
+scene = Scene(
+   title="Mange ta soupe",
+   company_id="6",
+   synops="",
+   duration_id="",
+   full_price="70000",
+   full_nb_people="2",
+   light_price="0",
+   light_nb_people="0",
+   teazer_url="",
+   disponibility=""
+   )
+scene.save()
+scenecat = SceneCat.objects.get(category="Cirque")
+scene.scenecat = scenecat
+age = Age.objects.get(category="Tout public")
+scene.age = age
+scene.save()
+

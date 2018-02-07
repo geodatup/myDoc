@@ -1,0 +1,259 @@
+#CKAN installation
+
+# Toubles with Ubuntu 14.04 
+# workaroud with jetty-solr : Concerning solr-jetty bug, there is another workaround that using tomcat, which is declaring /usr/share/java/tomcat-coyote.jar in the jetty config file /etc/jetty/start.config
+
+
+# bug in jetty package for ubuntu 14.04
+sudo sh -c 'echo /usr/share/java/tomcat-coyote.jar >> /etc/jetty/start.config'
+# see install solr for tomcat
+
+#dependencies ckan from source
+
+sudo apt-get install python-dev postgresql libpq-dev python-pip python-virtualenv git-core solr-jetty openjdk-6-jdk
+
+dpkg -l python-dev
+dpkg -l postgresql
+dpkg -l libpq-dev
+dpkg -l python-virtualenv
+dpkg -l git-core
+dpkg -l solr-jetty
+dpkg -l openjdk-6-jdk
+
+#Solr for jetty
+apt-get source solr-jetty
+cd solr-jetty
+./configure --prefix=$HOME
+make
+make install
+
+#JDK6
+apt-get source openjdk-6-jdk
+cd openjdk-6-jdk
+./configure --prefix=$HOME
+make
+make install
+
+
+
+# with Ubuntu 12.04 
+sudo apt-get install python-dev postgresql libpq-dev python-pip python-virtualenv git-core solr-jetty openjdk-6-jdk python-pastescript
+
+# On prepare les dossiers de travail
+# symlink the directories comme cela un copier coller des commandes de la doc fonctionnera
+mkdir -p ~/projects/ckan/lib
+sudo ln -s ~/projects/ckan/lib /usr/lib/ckan
+mkdir -p ~/projects/ckan/etc
+sudo ln -s ~/projects/ckan/etc /etc/ckan
+
+
+#environnement default
+sudo mkdir -p /usr/lib/ckan/default
+sudo chown `whoami` /usr/lib/ckan/default
+virtualenv --no-site-packages /usr/lib/ckan/default
+. /usr/lib/ckan/default/bin/activate
+
+
+#install dev version CKAN NOT FOR PRODUCTION 
+pip install -e 'git+https://github.com/ckan/ckan.git#egg=ckan'
+#FOR PRODUCTION use 
+pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.3#egg=ckan'
+
+# deposer les sources dans /usr/lib/ckan/default/src/ckan/
+
+
+#dependance python pour l'environnement de CKAN
+pip install -r /usr/lib/ckan/default/src/ckan/requirements.txt
+# juste pour etre sure qu'on utilise les dépendances dans virtuel desactiver l'env puis reactiver
+deactivate
+. /usr/lib/ckan/default/bin/activate
+
+# Postgres Setup
+# List existing databases:
+#sudo -u postgres psql -l
+
+# create user ckan
+sudo -u postgres createuser -S -D -R -P ckan_default
+
+# create database ckan
+sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
+
+# setup postgres finish
+
+# Create a CKAN config file
+sudo mkdir -p /etc/ckan/default
+sudo chown -R `whoami` /etc/ckan/
+
+#Change to the ckan directory and create a CKAN config file:
+
+cd /usr/lib/ckan/default/src/ckan
+paster make-config ckan /etc/ckan/default/development.ini
+
+#Edit the development.ini file in a text editor, changing the following options:
+#=============================
+#sqlalchemy.url
+#   This should refer to the database we created in 3. Setup a PostgreSQL database above:
+#   sqlalchemy.url = postgresql://ckan_default:pass@localhost/ckan_default
+#    Replace pass with the password that you created in 3. Setup a PostgreSQL database above.
+#    Tip
+#    If you’re using a remote host with password authentication rather than SSL authentication, use:
+#    sqlalchemy.url = postgresql://ckan_default:pass@<remotehost>/ckan_default?sslmode=disable
+#site_id
+#   Each CKAN site should have a unique site_id, for example:
+#   ckan.site_id = default
+#=============================
+
+#Edit /etc/default/jetty
+#=============================
+NO_START=0            # (line 4)
+JETTY_HOST=127.0.0.1  # (line 15)
+JETTY_PORT=8983       # (line 18)
+#=============================
+
+sudo service jetty start
+
+
+sudo mv /etc/solr/conf/schema.xml /etc/solr/conf/schema.xml.bak
+sudo ln -s /usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml /etc/solr/conf/schema.xml
+
+#Now restart Solr:
+sudo service jetty restart
+
+#Create database tables
+cd /usr/lib/ckan/default/src/ckan
+paster db init -c /etc/ckan/default/development.ini
+
+
+#Link to who.ini
+ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
+
+# RUN dev
+cd /usr/lib/ckan/default/src/ckan
+paster serve /etc/ckan/default/development.ini
+
+
+#need extentions?
+
+#CKAN Archiver extension
+#CKAN Data Preview extension
+#CKAN Google Analytics Report extension
+#CKAN Harvest extension
+#CKAN Hierarchy extension
+#CKAN Import Library extension
+#CKAN ODI Certificates extension
+#CKAN Ordnance Survey extension
+#CKAN QA extension
+#CKAN Spatial extension
+
+
+
+#########################
+## DataStore extension ##
+#########################
+#Set up the DataStore
+
+#Setting up the DataStore is optional. However, if you do skip this step, the DataStore features will not be available and the DataStore tests will fail.
+
+#Follow the instructions in DataStore extension to create the required databases and users, set the right permissions and set the appropriate values in your CKAN config file.
+
+#Set-up the database
+sudo -u postgres createuser -S -D -R -P -l datastore_default
+sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
+
+
+#set permissions
+
+
+If you are able to use the psql command to connect to your database as a superuser, you can use the datastore set-permissions command to emit the appropriate SQL to set the permissions.
+
+For example, if you can connect to your database server as the postgres superuser using:
+
+sudo -u postgres psql
+
+Then you can use this connection to set the permissions:
+
+sudo ckan datastore set-permissions |
+sudo -u postgres psql --set ON_ERROR_STOP=1
+
+IMPORTANTE Note
+
+If you performed a source install, you will need to replace all references to sudo ckan ... with paster --plugin=ckan ... and provide the path to the config file, e.g. paster --plugin=ckan datastore set-permissions postgres -c /etc/ckan/default/development.ini
+
+paster --plugin=ckan datastore set-permissions | sudo -u postgres psql --set ON_ERROR_STOP=1
+
+
+If your database server is not local, but you can access it over SSH, you can pipe the permissions script over SSH:
+
+sudo ckan datastore set-permissions |
+ssh dbserver sudo -u postgres psql --set ON_ERROR_STOP=1
+
+If you can’t use the psql command in this way, you can simply copy and paste the output of:
+
+sudo ckan datastore set-permissions
+
+into a PostgreSQL superuser console.
+
+
+
+
+# Test config 
+
+curl -X GET "http://127.0.0.1:5000/api/3/action/datastore_search?resource_id=_table_metadata"
+
+
+#return  this  
+{"help": "http://127.0.0.1:5000/api/3/action/help_show?name=datastore_search", "success": true, "result": {"resource_id": "_table_metadata", "fields": [{"type": "text", "id": "_id"}, {"type": "name", "id": "name"}, {"type": "oid", "id": "oid"}, {"type": "name", "id": "alias_of"}], "records": [{"_id": "1fab8662e5772995", "alias_of": "pg_views", "name": "_table_metadata", "oid": 63160}, {"_id": "21b5fe766665b205", "alias_of": "pg_tables", "name": "_table_metadata", "oid": 63160}], "_links": {"start": "/api/3/action/datastore_search?resource_id=_table_metadata", "next": "/api/3/action/datastore_search?offset=100&resource_id=_table_metadata"}, "total": 2}}
+
+curl -X POST http://127.0.0.1:5000/api/3/action/datastore_create -H "Authorization: 14dbe77b-e694-4875-be25-30235676682a" -d '{"resource": {"package_id": "ace0033f-7ed3-4a56-b51f-389df6e5c514"}, "fields": [ {"id": "a"}, {"id": "b"} ], "records": [ { "a": 1, "b": "xyz"}, {"a": 2, "b": "zzz"} ]}'
+
+
+
+
+################################
+## FileStore and file uploads ##
+################################
+#folder where ckan store files
+sudo mkdir -p /var/lib/ckan/default
+
+#add follow in config.ini file
+ckan.storage_path = /var/lib/ckan/default
+
+#acces right to the folder (APACHE instruction)
+sudo chown www-data /var/lib/ckan/default
+sudo chmod u+rwx /var/lib/ckan/default
+
+#acces right to the folder (JETTY instruction)
+sudo chown -R `whoami` /var/lib/ckan/default
+sudo chmod -R u+rwx /var/lib/ckan/default
+
+
+sudo service jetty restart
+
+
+################################
+## SOLR spatial filter        ##
+################################
+
+# JTS for solr-spatial-field
+ http://www.duraibalusamy.com/2013/06/solr-430-spatial-search-setup-for.html
+*get JTS 1.13, unpack and copy jars into /opt/solr/solr-webapp/webapp/WEB-INF/lib and /opt/solr/lib for good measure
+*Missing JTS will cause a classnotfoundexception
+*Old JTS (e.g. vividsolution's 1.8) will complain about a missing .Lineal class
+
+If that worked, SolR will return an XML response to http://%(ckan.site_url)s:8983/solr/ckan/select/?fl=*,score&sort=score%20asc&q={!geofilt%20score=distance%20filter=true%20sfield=spatial_geom%20pt=42.56667,1.48333%20d=1}&fq=feature_code:PPL
+
+Now, with the SolR core "collection1" renamed to "ckan", and the SolR admin GUI at %(ckan.site_url)s:8983/solr, the solr_url must include the core name, and, I cannot italicise this enough, must not have a trailing slash.
+
+solr_url = http://127.0.0.1:8983/solr/ckan 
+
+This works for one or several CKANs sharing the same SolR engine.
+
+
+
+
+#### RUN APPLICATION ####
+. /usr/lib/ckan/default/bin/activate
+
+sudo service jetty restart
+cd /usr/lib/ckan/default/src/ckan
+paster serve /etc/ckan/default/development.ini
