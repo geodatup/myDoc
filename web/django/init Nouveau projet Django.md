@@ -10,11 +10,11 @@ myenv/bin/activate
 ## installer django et les requierments (requirement.txt)
 
 
-# Creer un repertoire
+### Creer un repertoire
 ```
 django-admin startproject geodatup
 ```
-# configurer les fichiers settings.py base, local et de production
+### configurer les fichiers settings.py base, local et de production
 
 ```
 mkdir geodatup/geodatup/settings
