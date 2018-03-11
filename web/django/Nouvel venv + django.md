@@ -1,3 +1,4 @@
+```src
 mkvirtualenv djangotest17
 workon djangotest17
 cd ~/projects/
@@ -26,3 +27,4 @@ echo #mdp:
 aqwxsz
 
 python manage.py runserver
+```
