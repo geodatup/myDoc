@@ -1,13 +1,13 @@
-Nouveau projet python Django from scratch
+#Nouveau projet python Django from scratch
 
-# créer un env virtuel 
+## Créer un env virtuel 
 
-## Activer l'env
+### Activer l'env
 ```
 myenv/bin/activate
 ```
 
-# installer django et les requierments (requirement.txt)
+## installer django et les requierments (requirement.txt)
 
 
 # Creer un repertoire
